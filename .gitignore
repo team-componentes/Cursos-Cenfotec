@@ -1,0 +1,8 @@
+node_modules
+build
+npm-debug.log
+.env
+.DS_Store
+functions/node_modules
+functions/permissions.json
+functions/ui-debug.log
