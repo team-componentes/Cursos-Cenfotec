@@ -1,6 +1,7 @@
 'use strict'
 
 const express = require('express'),
+    functions = require('firebase-functions'),
     router = express.Router();
 
 // create
