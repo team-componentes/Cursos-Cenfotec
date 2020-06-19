@@ -6,3 +6,4 @@ npm-debug.log
 functions/node_modules
 functions/permissions.json
 functions/ui-debug.log
+*.log

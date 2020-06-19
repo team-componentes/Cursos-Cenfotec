@@ -1,20 +1,23 @@
+const functions = require('firebase-functions');
 const body_parser = require("body-parser");
 const admin = require('firebase-admin');
 const express = require('express');
 const cors = require('cors');
+
 const app = express();
 app.use(cors({ origin: true }));
 
 const serviceAccount = require("./permissions.json");
 
-const itemRoute = require('./routes/item');
-
-
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://cursos-cenfotec.firebaseio.com"
 });
+
 const db = admin.firestore();
+
+const itemRoute = require('./routes/item');
+const careerRoute = require('./routes/careers');
 
 app.use(cors());
 app.use(body_parser.json());
@@ -29,3 +32,6 @@ app.use(function (req, res, next) {
 });
 
 app.use('/api', itemRoute);
+app.use('/api', careerRoute);
+
+exports.app = functions.https.onRequest(app);
