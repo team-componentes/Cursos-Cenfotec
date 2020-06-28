@@ -19,7 +19,7 @@ router.post('/students/create', (req, res) => {
                         start_date: req.body.start_date
                     }
                 );
-            return res.status(200).send({ message: 'Item created' });
+            return res.status(200).send({ message: 'Student created' });
         } catch (error) {
             console.log(error);
             return res.status(500).send(error);
@@ -78,7 +78,7 @@ router.put('/students/update/:student_id', (req, res) => {
                 second_last_name: req.body.second_last_name,
                 start_date: req.body.start_date
             });
-            return res.status(200).send();
+            return res.status(200).send({ message: 'Student updated' });
         } catch (error) {
             console.log(error);
             return res.status(500).send(error);
@@ -86,13 +86,12 @@ router.put('/students/update/:student_id', (req, res) => {
     })();
 });
 
-// delete
 router.delete('/students/delete/:student_id', (req, res) => {
     (async () => {
         try {
             const document = db.collection('students').doc(req.params.student_id);
             await document.delete();
-            return res.status(200).send();
+            return res.status(200).send({ message: 'Student deleted' });
         } catch (error) {
             console.log(error);
             return res.status(500).send(error);

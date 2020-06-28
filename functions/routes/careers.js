@@ -6,16 +6,12 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const db = admin.firestore();
 
-/*
-Create career
-*/
-
 router.post('/careers/create', (req, res) =>{
     (async ()=>{
         try{
             await db.collection('careers').doc('/' + req.body.code + '/')
             .create({ name: req.body.name});
-            return res.status(200).send({message: 'Item created'});
+            return res.status(200).send({message: 'Career created'});
         }catch(error){
             console.log(error);
             return res.status(500).send(error);
@@ -23,7 +19,7 @@ router.post('/careers/create', (req, res) =>{
     })();
 });
 
-router.get('careers/read/:career_code', (req,res)=>{
+router.get('/careers/read/:career_code', (req,res)=>{
     (async () =>{
         try{
             const document = db.collection('careers').doc(req.params.career_code);
@@ -36,7 +32,7 @@ router.get('careers/read/:career_code', (req,res)=>{
     })();
 });
 
-router.get('careers/read', (req,res) =>{
+router.get('/careers/read', (req,res) =>{
     (async () => {
         try{
             const collection = db.collection('careers');
@@ -60,14 +56,14 @@ router.get('careers/read', (req,res) =>{
     })();
 });
 
-router.put('careers/update/:career_code', (req, res) => {
+router.put('/careers/update/:career_code', (req, res) => {
     (async () => {
         try {
             const document = db.collection('careers').doc(req.params.career_code);
             await document.update({
                 name: req.body.name
             });
-            return res.status(200).send();
+            return res.status(200).send({message: 'Career updated'});
         } catch (error) {
             console.log(error);
             return res.status(500).send(error);
@@ -75,13 +71,13 @@ router.put('careers/update/:career_code', (req, res) => {
     })();
 });
 
-// delete
-router.delete('/delete/:career_code', (req, res) => {
+
+router.delete('/careers/delete/:career_code', (req, res) => {
     (async () => {
         try {
             const document = db.collection('careers').doc(req.params.career_code);
             await document.delete();
-            return res.status(200).send();
+            return res.status(200).send({message: 'Career deleted'});
         } catch (error) {
             console.log(error);
             return res.status(500).send(error);

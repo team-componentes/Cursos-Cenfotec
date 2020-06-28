@@ -6,10 +6,6 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const db = admin.firestore();
 
-/*
-Create course
-*/
-
 router.post('/courses/create', (req, res) => {
     (async () => {
         try {
@@ -21,7 +17,7 @@ router.post('/courses/create', (req, res) => {
                         cost: req.body.cost
                     }
                 );
-            return res.status(200).send({ message: 'Item created' });
+            return res.status(200).send({ message: 'Course created' });
         } catch (error) {
             console.log(error);
             return res.status(500).send(error);
@@ -77,7 +73,7 @@ router.put('/courses/update/:course_id', (req, res) => {
                 credits: req.body.credits,
                 cost: req.body.cost
             });
-            return res.status(200).send();
+            return res.status(200).send({ message: 'Course updated' });
         } catch (error) {
             console.log(error);
             return res.status(500).send(error);
@@ -91,7 +87,7 @@ router.delete('/courses/delete/:course_id', (req, res) => {
         try {
             const document = db.collection('courses').doc(req.params.course_id);
             await document.delete();
-            return res.status(200).send();
+            return res.status(200).send({ message: 'Course deleted' });
         } catch (error) {
             console.log(error);
             return res.status(500).send(error);

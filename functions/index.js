@@ -18,6 +18,8 @@ const db = admin.firestore();
 
 const itemRoute = require('./routes/item');
 const careerRoute = require('./routes/careers');
+const courseRoute = require('./routes/courses');
+const studentRoute = require('./routes/students');
 
 app.use(cors());
 app.use(body_parser.json());
@@ -33,5 +35,7 @@ app.use(function (req, res, next) {
 
 app.use('/api', itemRoute);
 app.use('/api', careerRoute);
+app.use('/api', courseRoute);
+app.use('/api', studentRoute);
 
 exports.app = functions.https.onRequest(app);
