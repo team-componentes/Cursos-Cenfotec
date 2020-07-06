@@ -45,6 +45,7 @@ router.get('/students/read', (req, res) => {
                     }
                     response.push(data);
                 })
+                return Promise.resolve();
             })
             .then(() => res.status(200).send(response))
             .catch((error) => res.status(500).send(error))

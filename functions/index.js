@@ -20,6 +20,7 @@ const itemRoute = require('./routes/item');
 const careerRoute = require('./routes/careers');
 const courseRoute = require('./routes/courses');
 const studentRoute = require('./routes/students');
+const student_careerRoute = require('./routes/student_career');
 
 app.use(cors());
 app.use(body_parser.json());
@@ -37,5 +38,6 @@ app.use('/api', itemRoute);
 app.use('/api', careerRoute);
 app.use('/api', courseRoute);
 app.use('/api', studentRoute);
+app.use('/api', student_careerRoute);
 
 exports.app = functions.https.onRequest(app);
