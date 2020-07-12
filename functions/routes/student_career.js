@@ -28,11 +28,11 @@ router.get('/student_career/read/:student_id', (req, res) => {
 
             const careers = [];
             const snapshots = await Promise.all(promises);
-            snapshots.forEach(career => {
-                careers[career.id] = career.data();
+            snapshots.forEach((career,index) => {
+                careers[index] = career.data();
             })
             response['careers'] = careers;
-            return res.status(200).send(careers);
+            return res.status(200).send(response);
         }
         catch (error) {
             return res.status(500).send(error);
