@@ -9,7 +9,7 @@ const serviceAccount = require("./permissions.json");
 
 const itemRoute = require('./routes/item');
 
-
+//test
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://cursos-cenfotec.firebaseio.com"
