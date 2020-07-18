@@ -1,7 +1,11 @@
 import hudson.model.*
+import hudson.Util;
+import groovy.json.JsonOutput;
 import hudson.AbortException
 import hudson.console.HyperlinkNote
 import java.util.concurrent.CancellationException
+import jenkins.model.*
+jenkins = Jenkins.instance
 
 // Retrieve parameters of the current build
 def foo = build.buildVariableResolver.resolve("FOO")
