@@ -7,7 +7,7 @@ const admin = require('firebase-admin');
 const db = admin.firestore();
 
 router.get('/student_career/read/:student_id', (req, res) => {
-    const reference = db.collection('student_career').doc(req.body.studentId);
+    const reference = db.collection('student_career').doc(req.params.student_id);
     const response = {};
     (async () => {
         try {
@@ -40,15 +40,54 @@ router.get('/student_career/read/:student_id', (req, res) => {
     })();
 })
 
-router.post('student_career', (req, res) =>{
-    db.collection('career_student').doc(req.body.studentId).collection('careers').doc(req.body.careerId)
-    .create(
-        {
-            reference: db.doc(`/careers/${req.body.careerId}`)
+router.post('/student_career/create', (req, res) =>{
+    const userId = req.body.studentId;
+    const careerId = req.body.careerId;
+    const careerStudentReference = db.collection('student_career').doc(userId);
+
+    (async ()=>{
+        try{
+            const studentSnapshot = await careerStudentReference.get();
+           
+            const studentData = {
+                reference: db.doc(`students/${userId}`)
+            };
+            const careerData = {
+                "reference": db.doc(`careers/${careerId}`)
+            };
+
+            const promises = [];
+
+            if(!studentSnapshot.exists){   
+                promises.push(await careerStudentReference.set(studentData));
+            }
+
+            promises.push(await careerStudentReference.collection("careers").doc(careerId).set(careerData));
+            await Promise.all(promises);
+            return res.status(200).send({ message: "Register created"});
+
+        }catch(error){
+            return res.status(500).send(error);
         }
-    )
-    .then(() => res.status(200).send({}))
-    .catch((error) => console.log(error))
+    })();
 })
+
+router.delete('/student_career/delete', (req, res) =>{
+    const userId = req.body.studentId;
+    const careerId = req.body.careerId;
+    const careerStudentReference = db.collection('student_career').doc(userId);
+
+    (async () => {
+        try{
+
+            const document = careerStudentReference.collection("careers").doc(careerId);
+            await document.delete();
+            return res.status(200).send({ message: 'Register deleted' })
+
+        }catch(error){
+            return res.status(500).send(error);
+        }
+    })();
+});
 
 module.exports = router;
