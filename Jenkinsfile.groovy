@@ -1,14 +1,23 @@
-node {
-   stage 'test'
-   def whatThe = someFunc('textToFunc')
-   def whatThe2 = someFunc2('textToFunc2')
-}
-
-def someFunc(String text){
-    echo text
-    text
-}
-def someFunc2(String text2){
-    echo text2
-    text2
+pipeline {
+  agent none
+  options { 
+      skipDefaultCheckout() 
+  }
+  stages{
+    stage('SCM operation'){
+      agent {label 'SlaveSCMConnected'}
+      steps{
+        checkout scm
+        sh 'mvn clean install'
+      }
+   }
+    stage('Operation without SCM'){
+      agent {label 'SlaveWithoutConnectionToSCM'}
+      steps{
+        mail (to: 'devops@acme.com',
+             subject: "Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) is waiting for input",
+            body: "Please go to ${env.BUILD_URL}.");
+      }
+   }
+  }
 }
