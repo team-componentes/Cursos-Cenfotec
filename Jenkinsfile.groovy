@@ -5,7 +5,7 @@ import hudson.AbortException
 import hudson.console.HyperlinkNote
 import java.util.concurrent.CancellationException
 
-// Retrieve parameters of the current build
+// Retrieve parameters of the current build s
 def foo = build.buildVariableResolver.resolve("FOO")
 println "FOO=$foo"
 
@@ -22,3 +22,17 @@ try {
 } catch (CancellationException x) {
     throw new AbortException("${job.fullDisplayName} aborted.")
 }
+println HyperlinkNote.encodeTo('/' + anotherBuild.url, anotherBuild.fullDisplayName) + " completed. Result was " + anotherBuild.result
+
+// Check that it succeeded
+build.result = anotherBuild.result
+if (anotherBuild.result != Result.SUCCESS && anotherBuild.result != Result.UNSTABLE) {
+    // We abort this build right here and now.
+    throw new AbortException("${anotherBuild.fullDisplayName} failed.")
+}
+
+// Do something with the output.
+// On the contrary to Parameterized Trigger Plugin, you may now do something from that other build instance.
+// Like the parsing the build log (see http://javadoc.jenkins-ci.org/hudson/model/FreeStyleBuild.html )
+// You probably may also wish to update the current job's environment.
+build.addAction(new ParametersAction(new StringParameterValue('BAR', '3')))
