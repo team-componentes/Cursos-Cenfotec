@@ -1,23 +1,19 @@
 pipeline {
-  agent none
-  options { 
-      skipDefaultCheckout() 
-  }
-  stages{
-    stage('SCM operation'){
-      agent {label 'SlaveSCMConnected'}
-      steps{
-        checkout scm
-        sh 'mvn clean install'
-      }
-   }
-    stage('Operation without SCM'){
-      agent {label 'SlaveWithoutConnectionToSCM'}
-      steps{
-        mail (to: 'devops@acme.com',
-             subject: "Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) is waiting for input",
-            body: "Please go to ${env.BUILD_URL}.");
-      }
-   }
-  }
+    agent none 
+    stages {
+        stage('Example Build') {
+            agent { docker 'maven:3-alpine' } 
+            steps {
+                echo 'Hello, Maven'
+                sh 'mvn --version'
+            }
+        }
+        stage('Example Test') {
+            agent { docker 'openjdk:8-jre' } 
+            steps {
+                echo 'Hello, JDK'
+                sh 'java -version'
+            }
+        }
+    }
 }
