@@ -1,14 +1,36 @@
-node {
-   stage 'test'
-   def whatThe = someFunc('textToFunc')
-   def whatThe2 = someFunc2('textToFunc2')
-}
-
-def someFunc(String text){
-    echo text
-    text
-}
-def someFunc2(String text2){
-    echo text2
-    text2
+properties([pipelineTriggers([githubPush()])])
+ 
+pipeline {
+    /* specify nodes for executing */
+    agent {
+        label 'github-ci'
+    }
+ 
+    stages {
+        /* checkout repo */
+        stage('Checkout SCM') {
+            steps {
+                checkout([
+                 $class: 'GitSCM',
+                 branches: [[name: 'master']],
+                 userRemoteConfigs: [[
+                    url: 'git@github.com:wshihadeh/rabbitmq_client.git',
+                    credentialsId: '',
+                 ]]
+                ])
+            }
+        }
+         stage('Do the deployment') {
+            steps {
+                echo ">> Run deploy applications "
+            }
+        }
+    }
+ 
+    /* Cleanup workspace */
+    post {
+       always {
+           deleteDir()
+       }
+   }
 }
