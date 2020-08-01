@@ -1,14 +1,38 @@
-node {
-   stage 'test'
-   def whatThe = someFunc('textToFunc')
-   def whatThe2 = someFunc2('textToFunc2')
+import hudson.model.*
+import hudson.Util;
+import groovy.json.JsonOutput;
+import hudson.AbortException
+import hudson.console.HyperlinkNote
+import java.util.concurrent.CancellationException
+
+// Retrieve parameters of the current build s
+def foo = build.buildVariableResolver.resolve("FOO")
+println "FOO=$foo"
+
+// Start another job
+def job = Hudson.instance.getJob('MyJobName')
+def anotherBuild
+try {
+    def params = [
+      new StringParameterValue('FOO', foo),
+    ]
+    def future = job.scheduleBuild2(0, new Cause.UpstreamCause(build), new ParametersAction(params))
+    println "Waiting for the completion of " + HyperlinkNote.encodeTo('/' + job.url, job.fullDisplayName)
+    anotherBuild = future.get()
+} catch (CancellationException x) {
+    throw new AbortException("${job.fullDisplayName} aborted.")
+}
+println HyperlinkNote.encodeTo('/' + anotherBuild.url, anotherBuild.fullDisplayName) + " completed. Result was " + anotherBuild.result
+
+// Check that it succeeded
+build.result = anotherBuild.result
+if (anotherBuild.result != Result.SUCCESS && anotherBuild.result != Result.UNSTABLE) {
+    // We abort this build right here and now.
+    throw new AbortException("${anotherBuild.fullDisplayName} failed.")
 }
 
-def someFunc(String text){
-    echo text
-    text
-}
-def someFunc2(String text2){
-    echo text2
-    text2
-}
+// Do something with the output.
+// On the contrary to Parameterized Trigger Plugin, you may now do something from that other build instance.
+// Like the parsing the build log (see http://javadoc.jenkins-ci.org/hudson/model/FreeStyleBuild.html )
+// You probably may also wish to update the current job's environment.
+build.addAction(new ParametersAction(new StringParameterValue('BAR', '3')))
