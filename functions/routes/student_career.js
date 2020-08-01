@@ -6,7 +6,7 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const db = admin.firestore();
 
-router.get('/student_career/read/:student_id', (req, res) => {
+router.get('/student_career/:student_id', (req, res) => {
     const reference = db.collection('student_career').doc(req.params.student_id);
     const response = {};
     (async () => {
@@ -40,7 +40,7 @@ router.get('/student_career/read/:student_id', (req, res) => {
     })();
 })
 
-router.post('/student_career/create', (req, res) =>{
+router.post('/student_career', (req, res) =>{
     const userId = req.body.studentId;
     const careerId = req.body.careerId;
     const careerStudentReference = db.collection('student_career').doc(userId);
@@ -72,7 +72,7 @@ router.post('/student_career/create', (req, res) =>{
     })();
 })
 
-router.delete('/student_career/delete', (req, res) =>{
+router.delete('/student_career', (req, res) =>{
     const userId = req.body.studentId;
     const careerId = req.body.careerId;
     const careerStudentReference = db.collection('student_career').doc(userId);

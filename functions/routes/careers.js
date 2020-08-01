@@ -6,26 +6,26 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const db = admin.firestore();
 
-router.post('/careers/create', (req, res) => {
+router.post('/careers', (req, res) => {
     (async () => {
 
-        await db.collection('careers').doc(req.body.code)
+        await db.collection('careers').doc(req.body.id)
             .create({ name: req.body.name })
             .then(() => res.status(200).send({ message: 'Career created' }))
             .catch((error) => res.status(500).send(error))
     })();
 });
 
-router.get('/careers/read/:career_code', (req, res) => {
+router.get('/careers/:id', (req, res) => {
     (async () => {
-        const document = db.collection('careers').doc(req.params.career_code);
+        const document = db.collection('careers').doc(req.body.id);
         await document.get()
             .then((querySnapshot) => res.status(200).send(querySnapshot.data()))
             .catch((error) => res.status(500).send(error))
     })();
 });
 
-router.get('/careers/read', (req, res) => {
+router.get('/careers', (req, res) => {
     (async () => {
         const collection = db.collection('careers');
         const response = [];
@@ -45,9 +45,9 @@ router.get('/careers/read', (req, res) => {
     })();
 });
 
-router.put('/careers/update/:career_code', (req, res) => {
+router.put('/careers', (req, res) => {
     (async () => {
-        const document = db.collection('careers').doc(req.params.career_code);
+        const document = db.collection('careers').doc(req.body.id);
         await document.update({
             name: req.body.name
         })
@@ -57,9 +57,9 @@ router.put('/careers/update/:career_code', (req, res) => {
 });
 
 
-router.delete('/careers/delete/:career_code', (req, res) => {
+router.delete('/careers', (req, res) => {
     (async () => {
-        const document = db.collection('careers').doc(req.params.career_code);
+        const document = db.collection('careers').doc(req.body.id);
         await document.delete()
             .then(() => res.status(200).send({ message: 'Career deleted' }))
             .catch((error) => res.status(500).send(error))

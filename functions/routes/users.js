@@ -6,33 +6,35 @@ const router = express.Router();
 const admin = require('firebase-admin');
 const db = admin.firestore();
 
-router.post('/courses', (req, res) => {
+router.post('/users', (req, res) => {
     (async () => {
-        await db.collection('courses').doc(req.body.id)
+        await db.collection('users').doc(req.body.id)
             .create(
                 {
                     name: req.body.name,
-                    credits: req.body.credits,
-                    cost: req.body.cost
+                    first_last_name: req.body.first_last_name,
+                    second_last_name: req.body.second_last_name,
+                    user_type: req.body.user_type,
+                    email: req.body.email
                 }
             )
-            .then(() => res.status(200).send({ message: 'Course created' }))
+            .then(() => res.status(200).send({ message: 'User created' }))
             .catch((error) => res.status(500).send(error))
     })();
 });
 
-router.get('/courses/:id', (req, res) => {
+router.get('/users/:user_id', (req, res) => {
     (async () => {
-        const document = db.collection('courses').doc(req.params.id);
+        const document = db.collection('users').doc(req.params.user_id);
         await document.get()
             .then((querySnapshot) => res.status(200).send(querySnapshot.data()))
             .catch((error) => res.status(500).send(error))
     })();
 });
 
-router.get('/courses', (req, res) => {
+router.get('/users', (req, res) => {
     (async () => {
-        const collection = db.collection('courses');
+        const collection = db.collection('users');
         const response = [];
         await collection.get()
             .then(querySnapshot => {
@@ -50,27 +52,28 @@ router.get('/courses', (req, res) => {
     })();
 });
 
-router.put('/courses', (req, res) => {
+router.put('/users', (req, res) => {
     (async () => {
-        const document = db.collection('courses').doc(req.body.id);
+        const document = db.collection('users').doc(req.body.id);
         await document.update({
             name: req.body.name,
-            credits: req.body.credits,
-            cost: req.body.cost
+            first_last_name: req.body.first_last_name,
+            second_last_name: req.body.second_last_name,
+            user_type: req.body.user_type,
+            email: req.body.email
         })
-            .then(() => res.status(200).send({ message: 'Course updated' }))
+            .then(() => res.status(200).send({ message: 'User updated' }))
             .catch((error) => res.status(500).send(error))
     })();
 });
 
-router.delete('/courses', (req, res) => {
+router.delete('/users', (req, res) => {
     (async () => {
-        const document = db.collection('courses').doc(req.body.id);
+        const document = db.collection('users').doc(req.body.id);
         await document.delete()
-            .then(() => res.status(200).send({ message: 'Course deleted' }))
+            .then(() => res.status(200).send({ message: 'User deleted' }))
             .catch((error) => res.status(500).send(error))
     })();
 });
 
 module.exports = router;
-
