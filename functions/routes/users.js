@@ -19,7 +19,7 @@ router.post('/users', (req, res) => {
                 }
             )
             .then(() => res.status(200).send({ message: 'User created' }))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 
@@ -28,7 +28,7 @@ router.get('/users/:user_id', (req, res) => {
         const document = db.collection('users').doc(req.params.user_id);
         await document.get()
             .then((querySnapshot) => res.status(200).send(querySnapshot.data()))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 
@@ -48,7 +48,7 @@ router.get('/users', (req, res) => {
                 return Promise.resolve();
             })
             .then(() => res.status(200).send(response))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 
@@ -63,7 +63,7 @@ router.put('/users', (req, res) => {
             email: req.body.email
         })
             .then(() => res.status(200).send({ message: 'User updated' }))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 
@@ -72,7 +72,7 @@ router.delete('/users', (req, res) => {
         const document = db.collection('users').doc(req.body.id);
         await document.delete()
             .then(() => res.status(200).send({ message: 'User deleted' }))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 

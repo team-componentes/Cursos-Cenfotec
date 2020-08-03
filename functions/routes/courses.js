@@ -17,7 +17,7 @@ router.post('/courses', (req, res) => {
                 }
             )
             .then(() => res.status(200).send({ message: 'Course created' }))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 
@@ -26,7 +26,7 @@ router.get('/courses/:id', (req, res) => {
         const document = db.collection('courses').doc(req.params.id);
         await document.get()
             .then((querySnapshot) => res.status(200).send(querySnapshot.data()))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 
@@ -46,7 +46,7 @@ router.get('/courses', (req, res) => {
                 return Promise.resolve();
             })
             .then(() => res.status(200).send(response))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 
@@ -59,7 +59,7 @@ router.put('/courses', (req, res) => {
             cost: req.body.cost
         })
             .then(() => res.status(200).send({ message: 'Course updated' }))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 
@@ -68,7 +68,7 @@ router.delete('/courses', (req, res) => {
         const document = db.collection('courses').doc(req.body.id);
         await document.delete()
             .then(() => res.status(200).send({ message: 'Course deleted' }))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 

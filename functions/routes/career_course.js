@@ -35,7 +35,7 @@ router.get('/career_course/:career_id', (req, res) => {
             return res.status(200).send(response);
         }
         catch (error) {
-            return res.status(500).send(error);
+            return res.status(500).send({ message: error});
         }
     })();
 })
@@ -63,7 +63,7 @@ router.post('/career_course', (req, res) =>{
             return res.status(200).send({ message: "Register created"});
 
         }catch(error){
-            return res.status(500).send(error);
+            return res.status(500).send({ message: error});
         }
     })();
 })
@@ -81,7 +81,7 @@ router.delete('/career_course', (req, res) =>{
             return res.status(200).send({ message: 'Register deleted' })
 
         }catch(error){
-            return res.status(500).send(error);
+            return res.status(500).send({ message: error});
         }
     })();
 });
