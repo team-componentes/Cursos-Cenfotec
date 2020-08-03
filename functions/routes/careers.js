@@ -12,7 +12,7 @@ router.post('/careers', (req, res) => {
         await db.collection('careers').doc(req.body.id)
             .create({ name: req.body.name })
             .then(() => res.status(200).send({ message: 'Career created' }))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 
@@ -21,7 +21,7 @@ router.get('/careers/:id', (req, res) => {
         const document = db.collection('careers').doc(req.body.id);
         await document.get()
             .then((querySnapshot) => res.status(200).send(querySnapshot.data()))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 
@@ -41,7 +41,7 @@ router.get('/careers', (req, res) => {
                 return Promise.resolve();
             })
             .then(() => res.status(200).send(response))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 
@@ -52,7 +52,7 @@ router.put('/careers', (req, res) => {
             name: req.body.name
         })
             .then(() => res.status(200).send({ message: 'Career updated' }))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 
@@ -62,7 +62,7 @@ router.delete('/careers', (req, res) => {
         const document = db.collection('careers').doc(req.body.id);
         await document.delete()
             .then(() => res.status(200).send({ message: 'Career deleted' }))
-            .catch((error) => res.status(500).send(error))
+            .catch((error) => res.status(500).send({message: error}))
     })();
 });
 

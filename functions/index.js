@@ -20,6 +20,7 @@ const careerRoute = require('./routes/careers');
 const courseRoute = require('./routes/courses');
 const studentRoute = require('./routes/students');
 const student_careerRoute = require('./routes/student_career');
+const student_courseRoute = require('./routes/student_course');
 const users = require('./routes/users');
 const career_courseRoute = require('./routes/career_course');
 
@@ -41,5 +42,6 @@ app.use('/api', studentRoute);
 app.use('/api', student_careerRoute);
 app.use('/api', users);
 app.use('/api', career_courseRoute);
+app.use('/api', student_courseRoute);
 
 exports.app = functions.https.onRequest(app);
