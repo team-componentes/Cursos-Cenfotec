@@ -96,11 +96,32 @@ router.post('/signup', async (req, res) => {
                 uid: userRecord.uid
             };
             (async () => {
-                await db.collection('users').add(data)
-                    .then(() => res.status(200).send({ message: 'User created' }))
+                await db.collection('users').doc(req.body.id)
+                .create(data)
+                    .then(() => {
+                        if (data.user_type == "Student") {
+                            (async () => {
+                                console.log(req.body.id);
+                                await db.collection('students').doc(req.body.id)
+                                    .create(
+                                        {
+                                            college_id: req.body.college_id,
+                                            name: req.body.name,
+                                            first_last_name: req.body.first_last_name,
+                                            second_last_name: req.body.second_last_name,
+                                            start_date: req.body.start_date
+                                        }
+                                    )
+                                    .then(() => res.status(200).send({ message: 'Student created' }))
+                                    .catch((error) => res.status(500).send(error))
+                            })();
+                        }
+                        else {
+                            return res.status(200).send({ message: 'User created' });
+                        }
+                    })
                     .catch((error) => res.status(500).send({ message: error }))
             })();
-            //db.collection('users').add(data);
             return res.status(200).send(Success());
         })
         .catch(function (error) {
@@ -119,7 +140,7 @@ router.get('/users/email/:email', (req, res) => {
                 }
                 var data = [];
                 querySnapshot.forEach(doc => {
-                    data.push(doc.data());
+                    data.push(Object.assign({ id: doc.id }, doc.data()));
                 });
                 res.status(200).send(data);
             })
