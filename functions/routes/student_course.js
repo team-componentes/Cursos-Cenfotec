@@ -12,7 +12,7 @@ router.get('/student_course/:student_id', (req, res) => {
     (async () => {
         try {
             
-            const studentReference = db.collection('students').doc(req.params.student_id);
+            const studentReference = db.collection('users').doc(req.params.student_id);
             const studentSnapshot = await studentReference.get();
 
             const studentCourseReference = db.collection('student_course').doc(req.params.student_id);
@@ -62,7 +62,7 @@ router.post('/student_course', (req, res) =>{
             const courseStudentReference = db.collection('student_course').doc(userId);
             const courseStudentSnapshot = await courseStudentReference.get();
 
-            const studentReference = db.collection('students').doc(userId);
+            const studentReference = db.collection('users').doc(userId);
             const studentSnapshot = await studentReference.get();
 
             const courseReference = db.doc(`courses/${courseId}`);

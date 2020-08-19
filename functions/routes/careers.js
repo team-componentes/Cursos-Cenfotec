@@ -9,7 +9,7 @@ const db = admin.firestore();
 router.post('/careers', (req, res) => {
     (async () => {
 
-        await db.collection('careers').doc(req.body.id)
+        await db.collection('careers').doc(req.body.code)
             .create({ name: req.body.name })
             .then(() => res.status(200).send({ message: 'Career created' }))
             .catch((error) => res.status(500).send({message: error}))
@@ -18,7 +18,7 @@ router.post('/careers', (req, res) => {
 
 router.get('/careers/:id', (req, res) => {
     (async () => {
-        const document = db.collection('careers').doc(req.body.id);
+        const document = db.collection('careers').doc(req.params.id);
         await document.get()
             .then((querySnapshot) => res.status(200).send(querySnapshot.data()))
             .catch((error) => res.status(500).send({message: error}))

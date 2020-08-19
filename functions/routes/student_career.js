@@ -49,7 +49,7 @@ router.post('/student_career', (req, res) => {
         try {
             const studentSnapshot = await careerStudentReference.get();
 
-            const studentData = { reference: db.doc(`students/${userId}`) };
+            const studentData = { reference: db.doc(`users/${userId}`) };
             const careerData = { reference: db.doc(`careers/${careerId}`) };
 
             const promises = [];
