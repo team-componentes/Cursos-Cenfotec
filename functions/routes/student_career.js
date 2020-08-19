@@ -29,7 +29,7 @@ router.get('/student_career/:student_id', (req, res) => {
             const careers = [];
             const snapshots = await Promise.all(promises);
             snapshots.forEach((career, index) => {
-                careers[index] = career.data();
+                careers[index] = Object.assign({ id: career.id }, career.data());
             })
             response['careers'] = careers;
             return res.status(200).send(response);
