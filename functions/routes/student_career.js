@@ -124,7 +124,7 @@ router.get('/student_career/complete/:student_id', (req, res) => {
 
             careersCompleted.forEach((career, index) => {
                 career.courses = careerCourseCompleted[index].map(courseSnapshot => {
-                    return {id: courseSnapshot.id, ...courseSnapshot.data()}
+                    return { id: courseSnapshot.id, ...courseSnapshot.data() }
                 })
             });
 
