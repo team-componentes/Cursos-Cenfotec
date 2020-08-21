@@ -92,43 +92,51 @@ router.get('/student_career/complete/:student_id', (req, res) => {
     (async () => {
         try {
             const snapshot = await reference.get();
-            const studentReference = snapshot.data().reference;
+		const studentReference = snapshot.data().reference;
 
-            const studentSnapshot = await studentReference.get();
-            response['student'] = studentSnapshot.data();
-            const careersSnapshot = await reference.collection('careers').get();
-            const careerCoursePromises = [];
+		const studentSnapshot = await studentReference.get();
+		response['student'] = studentSnapshot.data();
 
-            const careersCompleted = await Promise.all(
-                careersSnapshot.docs.map(async career => {
-                    const careerReference = career.data().reference;
-                    const careerSnapshot = await careerReference.get();
+		const promises = [];
+		const careersSnapshot = await reference.collection('careers').get();
 
-                    const careerCourseReference = db.collection('career_course').doc(career.id);
-                    const careerCourseSnapshot = careerCourseReference.collection('courses').get();
-                    careerCoursePromises.push(careerCourseSnapshot);
+		careersSnapshot.docs.forEach(career => {
+			const careerReference = career.data().reference;
+			const p = careerReference.get();
+			promises.push(p);
+		});
 
-                    return { id: careerSnapshot.id, ...careerSnapshot.data() };
-                }))
+		const careers = [];
+		const snapshots = await Promise.all(promises);
 
-            const careerCourseSnapshots = await Promise.all(careerCoursePromises);
+		const careerCoursePromises = [];
+		snapshots.forEach((career, index) => {
+			careers[index] = career.data();
+			careers[index].id = career.id;
 
-            const careerCourseCompleted = await Promise.all(careerCourseSnapshots.map(async (career, index) => {
-                const coursesCompleted = career.docs.map(async (course, index) => {
-                    const courseReference = course.data().reference;
-                    const snapshot = await courseReference.get();
-                    return snapshot;
-                });
-                return Promise.all(coursesCompleted);
-            }));
+			const careerCourseReference = db.collection('career_course').doc(career.id);
+			const careerCourseSnapshot = careerCourseReference.collection('courses').get();
+			careerCoursePromises.push(careerCourseSnapshot);
+		});
 
-            careersCompleted.forEach((career, index) => {
-                career.courses = careerCourseCompleted[index].map(courseSnapshot => {
-                    return { id: courseSnapshot.id, ...courseSnapshot.data() }
-                })
-            });
+		const careerCourseSnapshots = await Promise.all(careerCoursePromises);
+		const careerCourses = [];
 
-            response['careers'] = careersCompleted;
+		careerCourseSnapshots.forEach((snapshot,index) => {
+			const coursePromises = [];
+			snapshot.docs.forEach(course => {
+				const courseReference = course.data().reference;
+				const p = courseReference.get();
+				coursePromises.push(p);
+			})
+			careerCourses[index] = coursePromises;
+		})
+
+		const careersCoursesCompleted = await Promise.all(careerCourses.map(p => Promise.all(p)));
+		const coursesCompleted = careersCoursesCompleted.map(arr => arr.map(course => course.data()));
+		careers.forEach((career, index) => career.courses = coursesCompleted[index]);
+
+            response['careers'] = careers;
             return res.status(200).send(response);
         }
         catch (error) {
