@@ -7,27 +7,27 @@ const admin = require('firebase-admin');
 const db = admin.firestore();
 
 router.get('/student_course/:student_id', (req, res) => {
-    
+
     const response = {};
     (async () => {
         try {
-            
+
             const studentReference = db.collection('users').doc(req.params.student_id);
             const studentSnapshot = await studentReference.get();
 
             const studentCourseReference = db.collection('student_course').doc(req.params.student_id);
             const studentCourseSnapshot = await studentCourseReference.get();
-            
-            if(studentSnapshot.exists){
+
+            if (studentSnapshot.exists) {
                 response['student'] = studentSnapshot.data();
 
-                if(!studentCourseSnapshot.exists){
+                if (!studentCourseSnapshot.exists) {
                     response['courses'] = [];
                     return res.status(200).send(response);
                 }
             }
             else
-                throw "The student does exist";
+                throw new Error("The student does exist");
 
             const promises = [];
             const coursesSnapshot = await studentCourseReference.collection('courses').get();
@@ -40,25 +40,25 @@ router.get('/student_course/:student_id', (req, res) => {
 
             const courses = [];
             const snapshots = await Promise.all(promises);
-            snapshots.forEach((course,index) => {
+            snapshots.forEach((course, index) => {
                 courses[index] = Object.assign({ id: course.id }, course.data());
             });
             response['courses'] = courses;
             return res.status(200).send(response);
         }
         catch (error) {
-            return res.status(500).send({ message: error});
+            return res.status(500).send({ message: error });
         }
     })();
 })
 
-router.post('/student_course', (req, res) =>{
+router.post('/student_course', (req, res) => {
     const userId = req.body.studentId;
     const courseId = req.body.courseId;
-    
 
-    (async ()=>{
-        try{
+
+    (async () => {
+        try {
             const courseStudentReference = db.collection('student_course').doc(userId);
             const courseStudentSnapshot = await courseStudentReference.get();
 
@@ -67,43 +67,43 @@ router.post('/student_course', (req, res) =>{
 
             const courseReference = db.doc(`courses/${courseId}`);
             const courseSnapshot = await courseReference.get();
-            
-            const studentData = {reference: studentReference};
-            const courseData = {reference: db.doc(`courses/${courseId}`)};
+
+            const studentData = { reference: studentReference };
+            const courseData = { reference: db.doc(`courses/${courseId}`) };
 
             const promises = [];
 
-            if(!courseStudentSnapshot.exists){   
+            if (!courseStudentSnapshot.exists) {
                 promises.push(await courseStudentReference.set(studentData));
             }
 
-            if(!courseSnapshot.exists)
-                throw "The course does not exist";
+            if (!courseSnapshot.exists)
+                throw new Error("The course does not exist");
 
             promises.push(await courseStudentReference.collection("courses").doc(courseId).set(courseData));
             await Promise.all(promises);
-            return res.status(200).send({ message: "Register created"});
+            return res.status(200).send({ message: "Register created" });
 
-        }catch(error){
-            return res.status(500).send({ message: error});
+        } catch (error) {
+            return res.status(500).send({ message: error });
         }
     })();
 })
 
-router.delete('/student_course', (req, res) =>{
+router.delete('/student_course', (req, res) => {
     const userId = req.body.studentId;
     const courseId = req.body.courseId;
     const courseStudentReference = db.collection('student_course').doc(userId);
 
     (async () => {
-        try{
+        try {
 
             const document = courseStudentReference.collection("courses").doc(courseId);
             await document.delete();
             return res.status(200).send({ message: 'Register deleted' })
 
-        }catch(error){
-            return res.status(500).send({ message: error});
+        } catch (error) {
+            return res.status(500).send({ message: error });
         }
     })();
 });
