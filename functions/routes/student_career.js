@@ -133,7 +133,9 @@ router.get('/student_career/complete/:student_id', (req, res) => {
 		})
 
 		const careersCoursesCompleted = await Promise.all(careerCourses.map(p => Promise.all(p)));
-		const coursesCompleted = careersCoursesCompleted.map(arr => arr.map(course => course.data()));
+		const coursesCompleted = careersCoursesCompleted.map(arr => arr.map(course => {
+            return {id:course.id, ...course.data()};
+        }));
 		careers.forEach((career, index) => career.courses = coursesCompleted[index]);
 
             response['careers'] = careers;
