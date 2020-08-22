@@ -12,6 +12,11 @@ router.get('/career_course/:career_id', (req, res) => {
     (async () => {
         try {
             const snapshot = await reference.get();
+            if(!snapshot.exists){
+                return res.status(200).send({
+                    "courses": []
+                });
+            }
             const careerReference = snapshot.data().reference;
 
             const careerSnapshot = await careerReference.get();
