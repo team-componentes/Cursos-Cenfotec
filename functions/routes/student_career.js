@@ -12,18 +12,19 @@ router.get('/student_career/:student_id', (req, res) => {
     (async () => {
         try {
             const snapshot = await reference.get();
-            if(snapshot.exists){
+            if(!snapshot.exists){
                 return res.status(200).send({
                     "careers": []
                 });
             }
             const studentReference = snapshot.data().reference;
-
+            
             const studentSnapshot = await studentReference.get();
             response['student'] = studentSnapshot.data();
 
             const promises = [];
             const careersSnapshot = await reference.collection('careers').get();
+            
 
             careersSnapshot.docs.forEach(career => {
                 const careerReference = career.data().reference;
